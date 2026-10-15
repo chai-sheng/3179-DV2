@@ -1,6 +1,6 @@
 {
   "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-  "description": "DCCEEW BIA polygons with schematic, equal-width humpback migration arrows. Routes are authored interpretive geometry based on source descriptions, not telemetry tracks. BIA coverage is not a protected-area boundary.",
+  "description": "Categorical area map of DCCEEW Biologically Important Areas, coloured by habitat use. Select a whale category and hover over a mapped area for its source information. These are habitat boundaries, not protected areas or complete species ranges.",
   "width": "container",
   "height": 410,
   "autosize": {
@@ -158,92 +158,6 @@
           {
             "field": "properties.OBJECTID",
             "title": "BIA ID"
-          }
-        ]
-      }
-    },
-    {
-      "data": {
-        "url": "data/schematic-routes.json"
-      },
-      "transform": [
-        {
-          "filter": "habitatSpecies === 'Humpback Whale'"
-        }
-      ],
-      "mark": {
-        "type": "line",
-        "stroke": "#174e59",
-        "strokeWidth": 1.8,
-        "strokeDash": [
-          5,
-          4
-        ],
-        "clip": true
-      },
-      "encoding": {
-        "longitude": {
-          "field": "lon",
-          "type": "quantitative"
-        },
-        "latitude": {
-          "field": "lat",
-          "type": "quantitative"
-        },
-        "detail": {
-          "field": "route"
-        },
-        "tooltip": [
-          {
-            "field": "route",
-            "title": "Schematic direction"
-          },
-          {
-            "field": "note",
-            "title": "Source context"
-          }
-        ]
-      }
-    },
-    {
-      "data": {
-        "url": "data/schematic-routes.json"
-      },
-      "transform": [
-        {
-          "filter": "habitatSpecies === 'Humpback Whale' && datum.last"
-        }
-      ],
-      "mark": {
-        "type": "point",
-        "shape": "triangle-up",
-        "filled": true,
-        "color": "#174e59",
-        "size": 80,
-        "clip": true
-      },
-      "encoding": {
-        "longitude": {
-          "field": "lon",
-          "type": "quantitative"
-        },
-        "latitude": {
-          "field": "lat",
-          "type": "quantitative"
-        },
-        "angle": {
-          "field": "angle",
-          "type": "quantitative",
-          "scale": null
-        },
-        "tooltip": [
-          {
-            "field": "route",
-            "title": "Schematic direction"
-          },
-          {
-            "field": "note",
-            "title": "Source context"
           }
         ]
       }

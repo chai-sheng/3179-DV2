@@ -1,8 +1,8 @@
 {
   "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-  "description": "Six selected seasonal windows transcribed from DCCEEW BIA records. BIA 473 Great Barrier Reef uses June-October for higher numbers; Hervey Bay BIA 59 uses July-November.",
+  "description": "Seasonal habitat map of six selected DCCEEW records. Choose a month to highlight areas whose documented seasonal windows include that month. Colours identify whale categories, not abundance.",
   "width": "container",
-  "height": 300,
+  "height": 410,
   "autosize": {
     "type": "fit",
     "contains": "padding",
@@ -51,98 +51,141 @@
       }
     }
   },
-  "data": {
-    "url": "data/seasons.json"
-  },
-  "mark": {
-    "type": "bar",
-    "height": 21,
-    "cornerRadius": 11
-  },
-  "encoding": {
-    "y": {
-      "field": "place",
-      "type": "nominal",
-      "sort": {
-        "field": "order"
-      },
-      "axis": {
-        "title": null,
-        "labelLimit": 240
-      }
-    },
-    "x": {
-      "field": "start",
-      "type": "quantitative",
-      "scale": {
-        "domain": [
-          0.5,
-          12.5
-        ]
-      },
-      "axis": {
-        "title": "Documented seasonal window",
-        "values": [
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9,
-          10,
-          11,
-          12
-        ],
-        "labelExpr": "['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][datum.value-1]",
-        "grid": true
-      }
-    },
-    "x2": {
-      "field": "end"
-    },
-    "color": {
-      "field": "species",
-      "type": "nominal",
-      "scale": {
-        "domain": [
-          "Humpback whale",
-          "Southern right whale",
-          "Sperm whale",
-          "Blue whale"
-        ],
-        "range": [
-          "#167b80",
-          "#d28b50",
-          "#8b76a5",
-          "#467bb1"
-        ]
-      },
-      "legend": null
-    },
-    "tooltip": [
-      {
-        "field": "place",
-        "title": "Area / use"
-      },
-      {
-        "field": "species",
-        "title": "Species"
-      },
-      {
-        "field": "meaning",
-        "title": "Window means"
-      },
-      {
-        "field": "source_note",
-        "title": "Original DCCEEW seasonal note"
-      },
-      {
-        "field": "id",
-        "title": "BIA record ID"
-      }
+  "projection": {
+    "type": "albers",
+    "rotate": [
+      -132,
+      0,
+      0
+    ],
+    "center": [
+      0,
+      -28
+    ],
+    "parallels": [
+      -18,
+      -36
     ]
-  }
+  },
+  "params": [
+    {
+      "name": "seasonMonth",
+      "value": "all"
+    }
+  ],
+  "layer": [
+    {
+      "data": {
+        "url": "data/world-110m.json",
+        "format": {
+          "type": "topojson",
+          "feature": "countries"
+        }
+      },
+      "transform": [
+        {
+          "filter": "toNumber(datum.id) === 36"
+        }
+      ],
+      "mark": {
+        "type": "geoshape",
+        "fill": "#e8e5db",
+        "stroke": "#b7c6c7",
+        "strokeWidth": 1
+      }
+    },
+    {
+      "data": {
+        "url": "data/whale-habitats.geojson",
+        "format": {
+          "type": "json",
+          "property": "features"
+        }
+      },
+      "transform": [
+        {
+          "lookup": "properties.OBJECTID",
+          "from": {
+            "data": {
+              "url": "data/seasons.json"
+            },
+            "key": "id",
+            "fields": [
+              "place",
+              "species",
+              "first_month",
+              "last_month",
+              "meaning",
+              "source_note"
+            ]
+          }
+        },
+        {
+          "filter": "isValid(datum.first_month)"
+        },
+        {
+          "calculate": "['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][datum.first_month-1] + '–' + ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][datum.last_month-1]",
+          "as": "window"
+        },
+        {
+          "filter": "seasonMonth === 'all' || (toNumber(seasonMonth) >= datum.first_month && toNumber(seasonMonth) <= datum.last_month)"
+        }
+      ],
+      "mark": {
+        "type": "geoshape",
+        "opacity": 0.55,
+        "stroke": "#315c64",
+        "strokeWidth": 0.6
+      },
+      "encoding": {
+        "color": {
+          "field": "species",
+          "type": "nominal",
+          "scale": {
+            "domain": [
+              "Humpback whale",
+              "Southern right whale",
+              "Blue whale"
+            ],
+            "range": [
+              "#167b80",
+              "#d28b50",
+              "#467bb1"
+            ]
+          },
+          "legend": {
+            "title": "Whale category",
+            "columns": 1,
+            "labelLimit": 220
+          }
+        },
+        "tooltip": [
+          {
+            "field": "place",
+            "title": "Area / use"
+          },
+          {
+            "field": "species",
+            "title": "Species"
+          },
+          {
+            "field": "window",
+            "title": "Documented window"
+          },
+          {
+            "field": "meaning",
+            "title": "What this window means"
+          },
+          {
+            "field": "source_note",
+            "title": "Source note"
+          },
+          {
+            "field": "properties.OBJECTID",
+            "title": "BIA ID"
+          }
+        ]
+      }
+    }
+  ]
 }

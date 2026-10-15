@@ -17,7 +17,7 @@ async function jsonFile(url) {
 }
 
 function chartWidth(element) {
-  const minimum = {'chart-04':420, 'chart-05':640, 'chart-07':420, 'chart-11':580};
+  const minimum = {'chart-04':420, 'chart-07':420, 'chart-11':580};
   return Math.max(minimum[element.id] || 240, Math.floor(element.getBoundingClientRect().width));
 }
 
@@ -25,7 +25,7 @@ async function drawChart(file) {
   const id = file.slice(0, 2);
   const target = byId(`chart-${id}`);
   try {
-    if (['04','05','07','11'].includes(id)) {
+    if (['04','07','11'].includes(id)) {
       target.classList.add('scrollable-chart');
       target.tabIndex = 0;
     }
@@ -33,11 +33,6 @@ async function drawChart(file) {
     const narrow = chartWidth(target) < 420;
     spec.width = chartWidth(target);
     // Preserve readable month labels and the plotted area on small screens.
-    if (id === '05' && narrow) {
-      spec.encoding.y.axis.labelLimit = 130;
-      spec.encoding.y.axis.labelFontSize = 9;
-      spec.encoding.x.axis.labelFontSize = 9;
-    }
     if (id === '03' && narrow) {
       spec.encoding.y.axis.labelLimit = 100;
       spec.encoding.y.axis.labelFontSize = 10;
@@ -55,6 +50,15 @@ async function drawChart(file) {
     });
     views.set(id, result.view);
     if (id === '01' || id === '02') await applyMapSignals(result.view);
+    if (id === '05') await result.view.signal('seasonMonth', byId('season-month').value).runAsync();
+    if (id === '09') {
+      const show = (_event, item) => {
+        const d = item?.datum;
+        if (!d || !d.species || !Number.isFinite(d.count)) return;
+        byId('treemap-detail').textContent = `${d.year} · ${d.species} · ${d.count.toLocaleString()} records · ${(d.year_share*100).toFixed(1)}% of that year · ${(d.baseline_share*100).toFixed(1)}% of the baseline`;
+      };
+      result.view.addEventListener('mousemove', show).addEventListener('click', show);
+    }
     if (id === '04') await result.view.signal('heatSpecies', byId('heat-species').value).runAsync();
     if (id === '10') await result.view.signal('habitatSpecies', byId('habitat-species').value).runAsync();
     target.setAttribute('aria-label', spec.description);
@@ -121,6 +125,13 @@ async function start() {
   });
   byId('habitat-species').addEventListener('change', async event => {
     if (views.has('10')) await views.get('10').signal('habitatSpecies', event.target.value).runAsync();
+  });
+  const seasonRows = await jsonFile('data/seasons.json');
+  byId('season-month').addEventListener('change', async event => {
+    const month = event.target.value;
+    const count = seasonRows.filter(d => month === 'all' || (+month >= d.first_month && +month <= d.last_month)).length;
+    byId('season-map-status').textContent = `${count} selected habitat records · ${month === 'all' ? 'all documented windows' : event.target.selectedOptions[0].text}${count ? '' : ' · No selected window covers this month; this does not mean whales are absent.'}`;
+    if (views.has('05')) await views.get('05').signal('seasonMonth', month).runAsync();
   });
   const dataReady = jsonFile('data/observations.json').then(data => {observations=data;updateCount();}).catch(error => {
     console.error(error);

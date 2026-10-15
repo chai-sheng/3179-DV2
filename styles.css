@@ -9,3 +9,6 @@
 
 /* Preserve readable labels on narrow screens; wide charts can be scrolled. */
 .viz.scrollable-chart{overflow-x:auto;overflow-y:hidden;scrollbar-width:thin;scrollbar-color:#a2bbb1 transparent}.viz.scrollable-chart .vega-embed>svg{max-width:none}.viz.scrollable-chart .vega-embed{width:max-content;min-width:100%}
+
+/* Simplified text-only introduction and persistent treemap details. */
+.hero h1{font-size:clamp(60px,6vw,84px)}.hero-inner{padding-top:48px}.hero-copy{max-width:650px}.hero-stats{margin-top:36px}.treemap-detail{margin-top:15px;padding:12px 14px;background:#edf2ec;border-left:3px solid #167b80;font-size:11px;color:#173c43;min-height:44px}#season-map-status{margin:0 0 12px}

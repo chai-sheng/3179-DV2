@@ -9,4 +9,4 @@ Local copies are bundled so that the charts do not require a CDN at runtime.
 - **Playfair Display**, Claus Eggers Sørensen — https://fonts.google.com/specimen/Playfair+Display — SIL Open Font License 1.1; see `playfair-display-OFL.txt`. Files font-5.ttf through font-7.ttf.
 - **Natural Earth** — https://www.naturalearthdata.com/about/terms-of-use/ — public-domain map data, distributed through `world-atlas@2/countries-110m.json`.
 
-The whale illustration and favicon are authored SVG decoration and contain no data. Data licences and observer credits are documented separately in `../downloads/data-methods.md` and the source CSV.
+The favicon is authored SVG decoration and contains no data. Data licences and observer credits are documented separately in `../downloads/data-methods.md` and the source CSV.

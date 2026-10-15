@@ -209,6 +209,106 @@
           "type": "ordinal"
         }
       }
+    },
+    {
+      "data": {
+        "url": "data/treemap-leaves.json"
+      },
+      "mark": {
+        "type": "rect",
+        "fill": "#ffffff",
+        "fillOpacity": 0,
+        "strokeOpacity": 0,
+        "cursor": "pointer"
+      },
+      "encoding": {
+        "x": {
+          "field": "x",
+          "type": "quantitative",
+          "axis": null,
+          "scale": {
+            "domain": [
+              0,
+              100
+            ]
+          }
+        },
+        "x2": {
+          "field": "x2"
+        },
+        "y": {
+          "field": "y",
+          "type": "quantitative",
+          "axis": null,
+          "scale": {
+            "domain": [
+              0,
+              62
+            ],
+            "reverse": true
+          }
+        },
+        "y2": {
+          "field": "y2"
+        },
+        "tooltip": [
+          {
+            "field": "year",
+            "type": "ordinal",
+            "title": "Year"
+          },
+          {
+            "field": "species",
+            "title": "Species"
+          },
+          {
+            "field": "count",
+            "type": "quantitative",
+            "title": "Observation records",
+            "format": ","
+          },
+          {
+            "field": "year_total",
+            "type": "quantitative",
+            "title": "All records that year",
+            "format": ","
+          },
+          {
+            "field": "year_share",
+            "type": "quantitative",
+            "title": "Share within year",
+            "format": ".1%"
+          },
+          {
+            "field": "baseline_share",
+            "type": "quantitative",
+            "title": "Share of 2016–2025",
+            "format": ".1%"
+          }
+        ]
+      },
+      "transform": [
+        {
+          "joinaggregate": [
+            {
+              "op": "sum",
+              "field": "count",
+              "as": "year_total"
+            }
+          ],
+          "groupby": [
+            "year"
+          ]
+        },
+        {
+          "calculate": "datum.count / datum.year_total",
+          "as": "year_share"
+        },
+        {
+          "calculate": "datum.count / 2761",
+          "as": "baseline_share"
+        }
+      ]
     }
   ]
 }
