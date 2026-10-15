@@ -1,0 +1,181 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "description": "Point map of community observation records. Default period 2016-2025. A dot is not a unique whale or a guaranteed live encounter.",
+  "width": "container",
+  "height": 350,
+  "autosize": {
+    "type": "fit",
+    "contains": "padding",
+    "resize": true
+  },
+  "padding": 8,
+  "config": {
+    "background": "transparent",
+    "font": "DM Sans",
+    "view": {
+      "stroke": null
+    },
+    "axis": {
+      "labelFont": "DM Sans",
+      "titleFont": "DM Sans",
+      "labelFontSize": 11,
+      "titleFontSize": 11,
+      "titleFontWeight": 500,
+      "labelColor": "#607176",
+      "titleColor": "#607176",
+      "domain": false,
+      "ticks": false,
+      "gridColor": "#e9eeea",
+      "gridOpacity": 1,
+      "labelPadding": 8,
+      "titlePadding": 12
+    },
+    "legend": {
+      "labelFont": "DM Sans",
+      "titleFont": "DM Sans",
+      "labelFontSize": 10,
+      "titleFontSize": 10,
+      "labelColor": "#435c62",
+      "titleColor": "#435c62",
+      "orient": "bottom",
+      "direction": "horizontal",
+      "symbolSize": 65
+    },
+    "title": {
+      "font": "DM Sans",
+      "color": "#173c43"
+    },
+    "style": {
+      "cell": {
+        "stroke": "transparent"
+      }
+    }
+  },
+  "params": [
+    {
+      "name": "speciesChoice",
+      "value": "All"
+    },
+    {
+      "name": "yearChoice",
+      "value": "all"
+    },
+    {
+      "name": "seasonChoice",
+      "value": "All"
+    }
+  ],
+  "projection": {
+    "type": "albers",
+    "rotate": [
+      -132,
+      0,
+      0
+    ],
+    "center": [
+      0,
+      -28
+    ],
+    "parallels": [
+      -18,
+      -36
+    ]
+  },
+  "layer": [
+    {
+      "data": {
+        "url": "data/world-110m.json",
+        "format": {
+          "type": "topojson",
+          "feature": "countries"
+        }
+      },
+      "transform": [
+        {
+          "filter": "toNumber(datum.id) === 36"
+        }
+      ],
+      "mark": {
+        "type": "geoshape",
+        "fill": "#e8e5db",
+        "stroke": "#b7c6c7",
+        "strokeWidth": 1
+      }
+    },
+    {
+      "data": {
+        "url": "data/observations.json"
+      },
+      "transform": [
+        {
+          "filter": "(yearChoice === 'all' ? datum.year <= 2025 : datum.year === toNumber(yearChoice)) && (speciesChoice === 'All' || datum.species === speciesChoice) && (seasonChoice === 'All' || (seasonChoice === 'summer' && (datum.month===12 || datum.month<=2)) || (seasonChoice === 'autumn' && datum.month>=3 && datum.month<=5) || (seasonChoice === 'winter' && datum.month>=6 && datum.month<=8) || (seasonChoice === 'spring' && datum.month>=9 && datum.month<=11))"
+        }
+      ],
+      "mark": {
+        "type": "circle",
+        "opacity": 0.54,
+        "size": 22,
+        "stroke": "white",
+        "strokeWidth": 0.25,
+        "clip": true
+      },
+      "encoding": {
+        "longitude": {
+          "field": "lon",
+          "type": "quantitative"
+        },
+        "latitude": {
+          "field": "lat",
+          "type": "quantitative"
+        },
+        "color": {
+          "field": "species",
+          "type": "nominal",
+          "scale": {
+            "domain": [
+              "Humpback whale",
+              "Southern right whale",
+              "Sperm whale",
+              "Blue whale"
+            ],
+            "range": [
+              "#167b80",
+              "#d28b50",
+              "#8b76a5",
+              "#467bb1"
+            ]
+          },
+          "legend": null
+        },
+        "tooltip": [
+          {
+            "field": "species",
+            "title": "Species"
+          },
+          {
+            "field": "taxon",
+            "title": "Identification"
+          },
+          {
+            "field": "date",
+            "title": "Recorded"
+          },
+          {
+            "field": "state",
+            "title": "Supplied state"
+          },
+          {
+            "field": "lat",
+            "title": "Latitude",
+            "format": ".3f"
+          },
+          {
+            "field": "lon",
+            "title": "Longitude",
+            "format": ".3f"
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,195 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "description": "Month-by-coast heatmap. Percentages are within each supplied-state group. Zero means no submitted records in this extract, not no whales.",
+  "width": "container",
+  "height": 230,
+  "autosize": {
+    "type": "fit",
+    "contains": "padding",
+    "resize": true
+  },
+  "padding": 8,
+  "config": {
+    "background": "transparent",
+    "font": "DM Sans",
+    "view": {
+      "stroke": null
+    },
+    "axis": {
+      "labelFont": "DM Sans",
+      "titleFont": "DM Sans",
+      "labelFontSize": 11,
+      "titleFontSize": 11,
+      "titleFontWeight": 500,
+      "labelColor": "#607176",
+      "titleColor": "#607176",
+      "domain": false,
+      "ticks": false,
+      "gridColor": "#e9eeea",
+      "gridOpacity": 1,
+      "labelPadding": 8,
+      "titlePadding": 12
+    },
+    "legend": {
+      "labelFont": "DM Sans",
+      "titleFont": "DM Sans",
+      "labelFontSize": 10,
+      "titleFontSize": 10,
+      "labelColor": "#435c62",
+      "titleColor": "#435c62",
+      "orient": "bottom",
+      "direction": "horizontal",
+      "symbolSize": 65
+    },
+    "title": {
+      "font": "DM Sans",
+      "color": "#173c43"
+    },
+    "style": {
+      "cell": {
+        "stroke": "transparent"
+      }
+    }
+  },
+  "data": {
+    "url": "data/observations.json"
+  },
+  "params": [
+    {
+      "name": "heatSpecies",
+      "value": "All"
+    }
+  ],
+  "transform": [
+    {
+      "filter": "datum.year <= 2025"
+    },
+    {
+      "filter": "heatSpecies === 'All' || datum.species === heatSpecies"
+    },
+    {
+      "aggregate": [
+        {
+          "op": "count",
+          "as": "records"
+        }
+      ],
+      "groupby": [
+        "coast",
+        "month"
+      ]
+    },
+    {
+      "impute": "records",
+      "key": "month",
+      "keyvals": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "groupby": [
+        "coast"
+      ],
+      "value": 0
+    },
+    {
+      "joinaggregate": [
+        {
+          "op": "sum",
+          "field": "records",
+          "as": "coast_total"
+        }
+      ],
+      "groupby": [
+        "coast"
+      ]
+    },
+    {
+      "calculate": "datum.coast_total ? datum.records / datum.coast_total : 0",
+      "as": "share"
+    }
+  ],
+  "mark": {
+    "type": "rect",
+    "stroke": "#f8faf7",
+    "strokeWidth": 3,
+    "cornerRadius": 4
+  },
+  "encoding": {
+    "x": {
+      "field": "month",
+      "type": "ordinal",
+      "sort": "ascending",
+      "axis": {
+        "title": null,
+        "labelAngle": 0,
+        "labelExpr": "['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][datum.value-1]"
+      }
+    },
+    "y": {
+      "field": "coast",
+      "type": "nominal",
+      "sort": [
+        "East",
+        "West",
+        "South",
+        "North",
+        "Unassigned"
+      ],
+      "axis": {
+        "title": null
+      }
+    },
+    "color": {
+      "field": "share",
+      "type": "quantitative",
+      "scale": {
+        "scheme": "tealblues",
+        "domain": [
+          0,
+          0.35
+        ],
+        "clamp": true
+      },
+      "legend": {
+        "title": "Share within coast",
+        "format": ".0%",
+        "gradientLength": 180,
+        "titleLimit": 250,
+        "labelExpr": "datum.value === 0.35 ? '35%+' : format(datum.value, '.0%')"
+      }
+    },
+    "tooltip": [
+      {
+        "field": "coast",
+        "title": "Coast group"
+      },
+      {
+        "field": "month",
+        "title": "Month number"
+      },
+      {
+        "field": "records",
+        "title": "Records this month"
+      },
+      {
+        "field": "coast_total",
+        "title": "All records in group"
+      },
+      {
+        "field": "share",
+        "title": "Share",
+        "format": ".1%"
+      }
+    ]
+  }
+}

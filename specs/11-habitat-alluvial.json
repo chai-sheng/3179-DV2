@@ -1,0 +1,337 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "description": "Species-to-behaviour alluvial diagram built with Vega-Lite ranged area and rectangle marks. Ribbon width equals counts of distinct BIA OBJECTIDs. All 44 records contribute exactly once.",
+  "width": "container",
+  "height": 330,
+  "autosize": {
+    "type": "fit",
+    "contains": "padding",
+    "resize": true
+  },
+  "padding": 8,
+  "config": {
+    "background": "transparent",
+    "font": "DM Sans",
+    "view": {
+      "stroke": null
+    },
+    "axis": {
+      "labelFont": "DM Sans",
+      "titleFont": "DM Sans",
+      "labelFontSize": 11,
+      "titleFontSize": 11,
+      "titleFontWeight": 500,
+      "labelColor": "#607176",
+      "titleColor": "#607176",
+      "domain": false,
+      "ticks": false,
+      "gridColor": "#e9eeea",
+      "gridOpacity": 1,
+      "labelPadding": 8,
+      "titlePadding": 12
+    },
+    "legend": {
+      "labelFont": "DM Sans",
+      "titleFont": "DM Sans",
+      "labelFontSize": 10,
+      "titleFontSize": 10,
+      "labelColor": "#435c62",
+      "titleColor": "#435c62",
+      "orient": "bottom",
+      "direction": "horizontal",
+      "symbolSize": 65
+    },
+    "title": {
+      "font": "DM Sans",
+      "color": "#173c43"
+    },
+    "style": {
+      "cell": {
+        "stroke": "transparent"
+      }
+    }
+  },
+  "layer": [
+    {
+      "data": {
+        "url": "data/habitat-links.json"
+      },
+      "mark": {
+        "type": "area",
+        "opacity": 0.5,
+        "interpolate": "monotone"
+      },
+      "encoding": {
+        "x": {
+          "type": "quantitative",
+          "axis": null,
+          "scale": {
+            "domain": [
+              -0.35,
+              1.32
+            ]
+          },
+          "field": "x"
+        },
+        "y": {
+          "type": "quantitative",
+          "axis": null,
+          "scale": {
+            "domain": [
+              0,
+              53
+            ],
+            "reverse": true
+          },
+          "field": "y",
+          "stack": null
+        },
+        "y2": {
+          "field": "y2"
+        },
+        "detail": {
+          "field": "link"
+        },
+        "color": {
+          "field": "species",
+          "type": "nominal",
+          "scale": {
+            "domain": [
+              "Humpback Whale",
+              "Southern Right Whale",
+              "Sperm Whale",
+              "Pygmy Blue Whale"
+            ],
+            "range": [
+              "#167b80",
+              "#d28b50",
+              "#8b76a5",
+              "#467bb1"
+            ]
+          },
+          "legend": null
+        },
+        "tooltip": [
+          {
+            "field": "species",
+            "title": "Whale category"
+          },
+          {
+            "field": "use",
+            "title": "Dominant BIA use"
+          },
+          {
+            "field": "count",
+            "title": "Unique BIA records"
+          }
+        ]
+      }
+    },
+    {
+      "data": {
+        "url": "data/habitat-nodes.json"
+      },
+      "transform": [
+        {
+          "filter": "datum.side === 'left'"
+        }
+      ],
+      "mark": {
+        "type": "rect"
+      },
+      "encoding": {
+        "x": {
+          "type": "quantitative",
+          "axis": null,
+          "scale": {
+            "domain": [
+              -0.35,
+              1.32
+            ]
+          },
+          "field": "x"
+        },
+        "x2": {
+          "field": "x2"
+        },
+        "y": {
+          "type": "quantitative",
+          "axis": null,
+          "scale": {
+            "domain": [
+              0,
+              53
+            ],
+            "reverse": true
+          },
+          "field": "y"
+        },
+        "y2": {
+          "field": "y2"
+        },
+        "color": {
+          "field": "species",
+          "type": "nominal",
+          "scale": {
+            "domain": [
+              "Humpback Whale",
+              "Southern Right Whale",
+              "Sperm Whale",
+              "Pygmy Blue Whale"
+            ],
+            "range": [
+              "#167b80",
+              "#d28b50",
+              "#8b76a5",
+              "#467bb1"
+            ]
+          },
+          "legend": null
+        }
+      }
+    },
+    {
+      "data": {
+        "url": "data/habitat-nodes.json"
+      },
+      "transform": [
+        {
+          "filter": "datum.side === 'right'"
+        }
+      ],
+      "mark": {
+        "type": "rect",
+        "color": "#173c43"
+      },
+      "encoding": {
+        "x": {
+          "type": "quantitative",
+          "axis": null,
+          "scale": {
+            "domain": [
+              -0.35,
+              1.32
+            ]
+          },
+          "field": "x"
+        },
+        "x2": {
+          "field": "x2"
+        },
+        "y": {
+          "type": "quantitative",
+          "axis": null,
+          "scale": {
+            "domain": [
+              0,
+              53
+            ],
+            "reverse": true
+          },
+          "field": "y"
+        },
+        "y2": {
+          "field": "y2"
+        }
+      }
+    },
+    {
+      "data": {
+        "url": "data/habitat-nodes.json"
+      },
+      "transform": [
+        {
+          "filter": "datum.side === 'left'"
+        },
+        {
+          "calculate": "datum.label + ' (' + datum.count + ')'",
+          "as": "text"
+        }
+      ],
+      "mark": {
+        "type": "text",
+        "align": "right",
+        "dx": -8,
+        "color": "#173c43",
+        "fontSize": 11
+      },
+      "encoding": {
+        "x": {
+          "type": "quantitative",
+          "axis": null,
+          "scale": {
+            "domain": [
+              -0.35,
+              1.32
+            ]
+          },
+          "field": "x"
+        },
+        "y": {
+          "type": "quantitative",
+          "axis": null,
+          "scale": {
+            "domain": [
+              0,
+              53
+            ],
+            "reverse": true
+          },
+          "field": "mid"
+        },
+        "text": {
+          "field": "text"
+        }
+      }
+    },
+    {
+      "data": {
+        "url": "data/habitat-nodes.json"
+      },
+      "transform": [
+        {
+          "filter": "datum.side === 'right'"
+        },
+        {
+          "calculate": "datum.label + ' (' + datum.count + ')'",
+          "as": "text"
+        }
+      ],
+      "mark": {
+        "type": "text",
+        "align": "left",
+        "dx": 8,
+        "color": "#173c43",
+        "fontSize": 11
+      },
+      "encoding": {
+        "x": {
+          "type": "quantitative",
+          "axis": null,
+          "scale": {
+            "domain": [
+              -0.35,
+              1.32
+            ]
+          },
+          "field": "x2"
+        },
+        "y": {
+          "type": "quantitative",
+          "axis": null,
+          "scale": {
+            "domain": [
+              0,
+              53
+            ],
+            "reverse": true
+          },
+          "field": "mid"
+        },
+        "text": {
+          "field": "text"
+        }
+      }
+    }
+  ]
+}

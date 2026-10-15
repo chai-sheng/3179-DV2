@@ -1,0 +1,148 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "description": "Six selected seasonal windows transcribed from DCCEEW BIA records. BIA 473 Great Barrier Reef uses June-October for higher numbers; Hervey Bay BIA 59 uses July-November.",
+  "width": "container",
+  "height": 300,
+  "autosize": {
+    "type": "fit",
+    "contains": "padding",
+    "resize": true
+  },
+  "padding": 8,
+  "config": {
+    "background": "transparent",
+    "font": "DM Sans",
+    "view": {
+      "stroke": null
+    },
+    "axis": {
+      "labelFont": "DM Sans",
+      "titleFont": "DM Sans",
+      "labelFontSize": 11,
+      "titleFontSize": 11,
+      "titleFontWeight": 500,
+      "labelColor": "#607176",
+      "titleColor": "#607176",
+      "domain": false,
+      "ticks": false,
+      "gridColor": "#e9eeea",
+      "gridOpacity": 1,
+      "labelPadding": 8,
+      "titlePadding": 12
+    },
+    "legend": {
+      "labelFont": "DM Sans",
+      "titleFont": "DM Sans",
+      "labelFontSize": 10,
+      "titleFontSize": 10,
+      "labelColor": "#435c62",
+      "titleColor": "#435c62",
+      "orient": "bottom",
+      "direction": "horizontal",
+      "symbolSize": 65
+    },
+    "title": {
+      "font": "DM Sans",
+      "color": "#173c43"
+    },
+    "style": {
+      "cell": {
+        "stroke": "transparent"
+      }
+    }
+  },
+  "data": {
+    "url": "data/seasons.json"
+  },
+  "mark": {
+    "type": "bar",
+    "height": 21,
+    "cornerRadius": 11
+  },
+  "encoding": {
+    "y": {
+      "field": "place",
+      "type": "nominal",
+      "sort": {
+        "field": "order"
+      },
+      "axis": {
+        "title": null,
+        "labelLimit": 240
+      }
+    },
+    "x": {
+      "field": "start",
+      "type": "quantitative",
+      "scale": {
+        "domain": [
+          0.5,
+          12.5
+        ]
+      },
+      "axis": {
+        "title": "Documented seasonal window",
+        "values": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12
+        ],
+        "labelExpr": "['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][datum.value-1]",
+        "grid": true
+      }
+    },
+    "x2": {
+      "field": "end"
+    },
+    "color": {
+      "field": "species",
+      "type": "nominal",
+      "scale": {
+        "domain": [
+          "Humpback whale",
+          "Southern right whale",
+          "Sperm whale",
+          "Blue whale"
+        ],
+        "range": [
+          "#167b80",
+          "#d28b50",
+          "#8b76a5",
+          "#467bb1"
+        ]
+      },
+      "legend": null
+    },
+    "tooltip": [
+      {
+        "field": "place",
+        "title": "Area / use"
+      },
+      {
+        "field": "species",
+        "title": "Species"
+      },
+      {
+        "field": "meaning",
+        "title": "Window means"
+      },
+      {
+        "field": "source_note",
+        "title": "Original DCCEEW seasonal note"
+      },
+      {
+        "field": "id",
+        "title": "BIA record ID"
+      }
+    ]
+  }
+}

@@ -1,0 +1,172 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "description": "100% stacked composition by coast group, including unassigned state records. Composition of reports is not species abundance.",
+  "width": "container",
+  "height": 240,
+  "autosize": {
+    "type": "fit",
+    "contains": "padding",
+    "resize": true
+  },
+  "padding": 8,
+  "config": {
+    "background": "transparent",
+    "font": "DM Sans",
+    "view": {
+      "stroke": null
+    },
+    "axis": {
+      "labelFont": "DM Sans",
+      "titleFont": "DM Sans",
+      "labelFontSize": 11,
+      "titleFontSize": 11,
+      "titleFontWeight": 500,
+      "labelColor": "#607176",
+      "titleColor": "#607176",
+      "domain": false,
+      "ticks": false,
+      "gridColor": "#e9eeea",
+      "gridOpacity": 1,
+      "labelPadding": 8,
+      "titlePadding": 12
+    },
+    "legend": {
+      "labelFont": "DM Sans",
+      "titleFont": "DM Sans",
+      "labelFontSize": 10,
+      "titleFontSize": 10,
+      "labelColor": "#435c62",
+      "titleColor": "#435c62",
+      "orient": "bottom",
+      "direction": "horizontal",
+      "symbolSize": 65
+    },
+    "title": {
+      "font": "DM Sans",
+      "color": "#173c43"
+    },
+    "style": {
+      "cell": {
+        "stroke": "transparent"
+      }
+    }
+  },
+  "data": {
+    "url": "data/observations.json"
+  },
+  "transform": [
+    {
+      "filter": "datum.year <= 2025"
+    },
+    {
+      "aggregate": [
+        {
+          "op": "count",
+          "as": "records"
+        }
+      ],
+      "groupby": [
+        "coast",
+        "species"
+      ]
+    },
+    {
+      "joinaggregate": [
+        {
+          "op": "sum",
+          "field": "records",
+          "as": "total"
+        }
+      ],
+      "groupby": [
+        "coast"
+      ]
+    },
+    {
+      "calculate": "datum.records/datum.total",
+      "as": "share"
+    }
+  ],
+  "mark": {
+    "type": "bar",
+    "height": 27
+  },
+  "encoding": {
+    "y": {
+      "field": "coast",
+      "type": "nominal",
+      "sort": [
+        "East",
+        "West",
+        "South",
+        "North",
+        "Unassigned"
+      ],
+      "axis": {
+        "title": null
+      }
+    },
+    "x": {
+      "field": "share",
+      "type": "quantitative",
+      "stack": "zero",
+      "axis": {
+        "title": "Share of recorded observations",
+        "format": ".0%",
+        "tickCount": 5
+      },
+      "scale": {
+        "domain": [
+          0,
+          1
+        ]
+      }
+    },
+    "color": {
+      "field": "species",
+      "type": "nominal",
+      "scale": {
+        "domain": [
+          "Humpback whale",
+          "Southern right whale",
+          "Sperm whale",
+          "Blue whale"
+        ],
+        "range": [
+          "#167b80",
+          "#d28b50",
+          "#8b76a5",
+          "#467bb1"
+        ]
+      },
+      "legend": null
+    },
+    "order": {
+      "field": "species",
+      "sort": "ascending"
+    },
+    "tooltip": [
+      {
+        "field": "coast",
+        "title": "Coast group"
+      },
+      {
+        "field": "species",
+        "title": "Species"
+      },
+      {
+        "field": "records",
+        "title": "Species records"
+      },
+      {
+        "field": "total",
+        "title": "Group total"
+      },
+      {
+        "field": "share",
+        "title": "Share",
+        "format": ".1%"
+      }
+    ]
+  }
+}

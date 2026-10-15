@@ -1,0 +1,201 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "description": "Monthly humpback latitude distributions, 2016-2025. Boxes show middle 50%, ticks show medians, whiskers show full observed range. Months with n<20 are omitted.",
+  "width": "container",
+  "height": 260,
+  "autosize": {
+    "type": "fit",
+    "contains": "padding",
+    "resize": true
+  },
+  "padding": 8,
+  "config": {
+    "background": "transparent",
+    "font": "DM Sans",
+    "view": {
+      "stroke": null
+    },
+    "axis": {
+      "labelFont": "DM Sans",
+      "titleFont": "DM Sans",
+      "labelFontSize": 11,
+      "titleFontSize": 11,
+      "titleFontWeight": 500,
+      "labelColor": "#607176",
+      "titleColor": "#607176",
+      "domain": false,
+      "ticks": false,
+      "gridColor": "#e9eeea",
+      "gridOpacity": 1,
+      "labelPadding": 8,
+      "titlePadding": 12
+    },
+    "legend": {
+      "labelFont": "DM Sans",
+      "titleFont": "DM Sans",
+      "labelFontSize": 10,
+      "titleFontSize": 10,
+      "labelColor": "#435c62",
+      "titleColor": "#435c62",
+      "orient": "bottom",
+      "direction": "horizontal",
+      "symbolSize": 65
+    },
+    "title": {
+      "font": "DM Sans",
+      "color": "#173c43"
+    },
+    "style": {
+      "cell": {
+        "stroke": "transparent"
+      }
+    }
+  },
+  "data": {
+    "url": "data/observations.json"
+  },
+  "transform": [
+    {
+      "filter": "datum.year <= 2025"
+    },
+    {
+      "filter": "datum.species === 'Humpback whale'"
+    },
+    {
+      "aggregate": [
+        {
+          "op": "count",
+          "as": "n"
+        },
+        {
+          "op": "min",
+          "field": "lat",
+          "as": "min_lat"
+        },
+        {
+          "op": "max",
+          "field": "lat",
+          "as": "max_lat"
+        },
+        {
+          "op": "q1",
+          "field": "lat",
+          "as": "q1"
+        },
+        {
+          "op": "q3",
+          "field": "lat",
+          "as": "q3"
+        },
+        {
+          "op": "median",
+          "field": "lat",
+          "as": "median"
+        }
+      ],
+      "groupby": [
+        "month"
+      ]
+    },
+    {
+      "filter": "datum.n >= 20"
+    }
+  ],
+  "encoding": {
+    "x": {
+      "field": "month",
+      "type": "ordinal",
+      "sort": "ascending",
+      "axis": {
+        "title": null,
+        "labelAngle": 0,
+        "labelExpr": "['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][datum.value-1]"
+      }
+    },
+    "tooltip": [
+      {
+        "field": "month",
+        "title": "Month number"
+      },
+      {
+        "field": "n",
+        "title": "Humpback records"
+      },
+      {
+        "field": "median",
+        "title": "Median latitude",
+        "format": ".1f"
+      },
+      {
+        "field": "q1",
+        "title": "Lower quarter latitude",
+        "format": ".1f"
+      },
+      {
+        "field": "q3",
+        "title": "Upper quarter latitude",
+        "format": ".1f"
+      }
+    ]
+  },
+  "layer": [
+    {
+      "mark": {
+        "type": "rule",
+        "color": "#6eacac"
+      },
+      "encoding": {
+        "y": {
+          "field": "min_lat",
+          "type": "quantitative",
+          "scale": {
+            "domain": [
+              -45,
+              -10
+            ]
+          },
+          "axis": {
+            "title": "Recorded latitude",
+            "labelExpr": "abs(datum.value) + '°S'",
+            "tickCount": 5
+          }
+        },
+        "y2": {
+          "field": "max_lat"
+        }
+      }
+    },
+    {
+      "mark": {
+        "type": "bar",
+        "size": 20,
+        "color": "#b8dcda",
+        "stroke": "#167b80",
+        "strokeWidth": 1
+      },
+      "encoding": {
+        "y": {
+          "field": "q1",
+          "type": "quantitative"
+        },
+        "y2": {
+          "field": "q3"
+        }
+      }
+    },
+    {
+      "mark": {
+        "type": "tick",
+        "color": "#0c525b",
+        "size": 20,
+        "thickness": 2
+      },
+      "encoding": {
+        "y": {
+          "field": "median",
+          "type": "quantitative"
+        }
+      }
+    }
+  ]
+}
